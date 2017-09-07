@@ -9,13 +9,29 @@
         android:roundIcon="@mipmap/app_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".activities.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.PillActivity">
+
+        </activity>
+        <activity
+            android:exported="false"
+            android:parentActivityName=".activities.HomeActivity"
+            android:name=".activities.SettingsActivity">
+
+        </activity>
+
+        <provider android:authorities="com.crackncrunch.pillreminder"
+                  android:name=".data.db.PillContentProvider"
+                  android:exported="false"/>
     </application>
 
 </manifest>
