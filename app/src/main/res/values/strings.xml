@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">PillReminder</string>
+    <string name="take_the_pill">Take the pill</string>
+    <string name="pill_pack_description">Pill pack</string>
+
+    / Material Design Dimensions
+    <dimen name="dim_material_0">0dp</dimen>
+    <dimen name="dim_material_4">4dp</dimen>
+    <dimen name="dim_material_8">8dp</dimen>
+    <dimen name="dim_material_16">16dp</dimen>
+    <dimen name="dim_material_24">24dp</dimen>
+    <dimen name="dim_material_32">32dp</dimen>
+    <dimen name="dim_material_40">40dp</dimen>
+    <dimen name="dim_material_44">44dp</dimen>
+    <dimen name="dim_material_48">48dp</dimen>
+    <dimen name="dim_material_72">72dp</dimen>
+    <dimen name="dim_material_192">192dp</dimen>
 </resources>
