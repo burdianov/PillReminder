@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PillReminder</string>
+    <string name="app_name">Pill Reminder</string>
     <string name="take_the_pill">Take the pill</string>
     <string name="pill_pack_description">Pill pack</string>
 
