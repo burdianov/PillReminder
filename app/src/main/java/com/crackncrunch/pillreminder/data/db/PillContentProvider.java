@@ -14,7 +14,7 @@ public class PillContentProvider extends ContentProvider {
     public static final String TAG = PillContentProvider.class.getSimpleName();
 
     public static final int PILLS = 100;
-    public static final int PILLS_WITH_ID = 101;
+    public static final int PILL_WITH_ID = 101;
 
     private PillDbHelper mDbHelper;
 
@@ -28,12 +28,13 @@ public class PillContentProvider extends ContentProvider {
         // content://com.crackncrunch.pillreminder/tasks/id
         sUriMatcher.addURI(PillDbContract.CONTENT_AUTHORITY,
                 PillDbContract.TABLE_PILLS + "/#",
-                PILLS_WITH_ID);
+                PILL_WITH_ID);
     }
 
     @Override
     public boolean onCreate() {
-        return false;
+        mDbHelper = new PillDbHelper(getContext());
+        return true;
     }
 
     @Nullable
@@ -41,7 +42,7 @@ public class PillContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection,
                         @Nullable String selection, @Nullable String[] selectionArgs,
                         @Nullable String sortOrder) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         int match = sUriMatcher.match(uri);
         Cursor retCursor;
@@ -58,7 +59,7 @@ public class PillContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             //Query one task
-            case PILLS_WITH_ID:
+            case PILL_WITH_ID:
                 long id = ContentUris.parseId(uri);
                 selection = String.format("%s = ?", PillDbContract.PillColumns
                         ._ID);
@@ -89,16 +90,77 @@ public class PillContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        Uri returnUri;
+
+        switch (match) {
+            case PILLS:
+                long id = db.insert(PillDbContract.TABLE_PILLS, null, contentValues);
+                if (id > 0) {
+                    returnUri = ContentUris.withAppendedId(
+                            PillDbContract.CONTENT_URI, id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return returnUri;
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable
+            String[] selectionArgs) {
+        switch (sUriMatcher.match(uri)) {
+            case PILLS:
+                //Rows aren't counted with null selection
+                selection = (selection == null) ? "1" : selection;
+                break;
+            case PILL_WITH_ID:
+                long id = ContentUris.parseId(uri);
+                selection = String.format("%s = ?", PillDbContract.PillColumns._ID);
+                selectionArgs = new String[]{String.valueOf(id)};
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal delete URI");
+        }
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int count = db.delete(PillDbContract.TABLE_PILLS, selection, selectionArgs);
+
+        if (count > 0) {
+            //Notify observers of the change
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return count;
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(@NonNull Uri uri, @Nullable ContentValues
+            contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case PILL_WITH_ID:
+                long id = ContentUris.parseId(uri);
+                selection = String.format("%s = ?", PillDbContract.PillColumns._ID);
+                selectionArgs = new String[]{String.valueOf(id)};
+
+                int count = db.update(PillDbContract.TABLE_PILLS,
+                        contentValues, selection, selectionArgs);
+                if (count > 0) {
+                    //Notify observers of the change
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return count;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 }

@@ -2,9 +2,8 @@
     <string name="app_name">Pill Reminder</string>
     <string name="take_the_pill">Take the pill</string>
     <string name="pill_pack_description">Pill pack</string>
-    <string name="loader_not_implemented">Loader not implemented</string>
+    <string name="loader_not_implemented">Loader not implemented: </string>
     <string name="failed_to_load_data">"Failed to asynchronously load data.</string>
-    <string name="colon">:\u0020</string>
     <string name="pref_sortBy_date">date</string>
     <string name="pref_sortBy_date_label">Date</string>
     <string name="pref_sortBy_name">name</string>

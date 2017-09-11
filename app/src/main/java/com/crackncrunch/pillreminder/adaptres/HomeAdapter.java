@@ -35,7 +35,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     @Override
     public void onBindViewHolder(HomeAdapter.HomeViewHolder holder, int position) {
         Pill pill = getItem(position);
-
         holder.name.setText(pill.getName());
         float floatQty = pill.getQty();
         float qty = floatQty - (int) floatQty;
@@ -73,5 +72,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void swapCursor(Cursor cursor) {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+        mCursor = cursor;
+        notifyDataSetChanged();
     }
 }

@@ -114,19 +114,18 @@ public class HomeActivity extends AppCompatActivity
                 };
             default:
                 throw new RuntimeException(
-                        getString(R.string.loader_not_implemented) +
-                                getString(R.string.colon) + id);
+                        getString(R.string.loader_not_implemented) + id);
         }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        mAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        mAdapter.swapCursor(null);
     }
 
     @Override
